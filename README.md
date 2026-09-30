@@ -4,7 +4,6 @@ Overview:
 A housing price prediction system with two independent portal applications, each with its own backend, all built around one shared ML model.
 
 Architecture:
-
     Browser -> Next.js portal (3000)
                 App 1: Property Value Estimator -> Python/FastAPI (8001) -> Model API (8000)
                 App 2: Property Market Analysis  -> Java/Spring Boot (8002) -> Model API (8000)
