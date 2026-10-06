@@ -1,7 +1,7 @@
 """Loads the trained model from disk (cached) and serves predictions."""
 
-from functools import lru_cache
 import logging
+from functools import lru_cache
 from pathlib import Path
 from typing import List
 
@@ -15,7 +15,6 @@ MODEL_PATH = BASE_DIR / "models" / "model.joblib"
 
 
 class ModelNotTrainedError(RuntimeError):
-    """model.joblib doesn't exist yet - run train.py first."""
     pass
 
 
@@ -45,10 +44,19 @@ def predict(features: List[dict]) -> List[float]:
 def get_model_info() -> dict:
     bundle = get_model_bundle()
     return {
-        "model_type": "LinearRegression",
+        "model_type": bundle["model_type"],
         "coefficients": bundle["coefficients"],
         "intercept": bundle["intercept"],
         "features": bundle["features"],
         "metrics": bundle["metrics"],
         "trained_on_samples": bundle["trained_on_samples"],
+    }
+
+
+def get_model_comparison() -> dict:
+    bundle = get_model_bundle()
+    return {
+        "served_model": "ridge",
+        "features": bundle["features"],
+        "models": bundle["comparison"],
     }

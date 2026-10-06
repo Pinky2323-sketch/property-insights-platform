@@ -2,27 +2,26 @@ package com.realty.market.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.realty.market.model.PropertyFeatures;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * Calls the model API to get price predictions.
+ * Calls the Model API to get price predictions.
  */
 @Component
-public class ModelClient {
+public class ModelClient implements ModelPredictor {
 
     private static final Logger log = LoggerFactory.getLogger(ModelClient.class);
 
@@ -38,11 +37,10 @@ public class ModelClient {
         this.client = RestClient.builder().baseUrl(baseUrl).requestFactory(factory).build();
     }
 
-    
+    @Override
     public List<Double> predict(List<PropertyFeatures> properties) {
-        List<Map<String, Object>> body = properties.stream().map(ModelClient::toModelJson).toList();
-
         log.info("Requesting predictions for {} properties", properties.size());
+        List<Map<String, Object>> body = properties.stream().map(ModelClient::toModelJson).toList();
 
         try {
             ModelResponse response = client.post()
@@ -68,7 +66,6 @@ public class ModelClient {
         }
     }
 
-    
     private static Map<String, Object> toModelJson(PropertyFeatures p) {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("square_footage", p.squareFootage());

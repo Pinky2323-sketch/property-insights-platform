@@ -1,7 +1,7 @@
 Housing Price Prediction API
 
 Overview:
-A FastAPI service that predicts housing prices using a linear regression model, trained on 50 sample properties with cross-validated performance metrics.
+A FastAPI service that predicts housing prices using a  Ridge regression (alpha=3) model, trained on 50 sample properties with cross-validated performance metrics.
 
 Features:
 - POST /predict — accepts a single house or a batch (list) of houses, returns predicted price(s)

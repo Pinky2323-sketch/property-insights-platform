@@ -1,8 +1,8 @@
 """FastAPI service that validates property estimate requests and forwards them to the model API."""
 
-from typing import Optional
-
 import logging
+import os
+
 import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,7 +14,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-API_URL = "http://localhost:8000/predict"
+API_URL = os.environ.get("API_URL", "http://localhost:8000/predict")
 
 app = FastAPI(
     title="Property Estimator Backend",
@@ -25,7 +25,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
-    allow_methods=["*"],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
@@ -65,6 +65,12 @@ async def estimate(features: PropertyFeatures):
             raise HTTPException(
                 status_code=503,
                 detail="Cannot reach the prediction model API",
+            )
+        except httpx.TimeoutException:
+            logger.error("Prediction model API timed out at %s", API_URL)
+            raise HTTPException(
+                status_code=504,
+                detail="The prediction model API took too long to respond.",
             )
 
     if response.status_code != 200:

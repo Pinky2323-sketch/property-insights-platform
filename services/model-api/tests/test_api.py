@@ -29,7 +29,7 @@ class TestModelInfo:
         assert response.status_code == 200
 
         data = response.json()
-        assert data["model_type"] == "LinearRegression"
+        assert data["model_type"].startswith("Ridge")
         assert len(data["coefficients"]) == 7
         assert "r2" in data["metrics"]
         assert "rmse" in data["metrics"]

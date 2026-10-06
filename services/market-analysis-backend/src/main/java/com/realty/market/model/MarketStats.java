@@ -1,6 +1,5 @@
 package com.realty.market.model;
 
-/** Response shapes for the dashboard endpoints. */
 public final class MarketStats {
 
     private MarketStats() {}
